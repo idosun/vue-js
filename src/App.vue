@@ -12,10 +12,10 @@
         <button class="event-button" v-on:click="submitEmail">Submit</button>
       </div>
       <div id="event-list">
-        <EventButton title="Type Error" :onClick="notAFunctionError" />
-        <EventButton title="URIError" :onClick="uriError" />
-        <EventButton title="SyntaxError" :onClick="syntaxError" />
-        <EventButton title="RangeError" :onClick="rangeError" />
+        <EventButton buttonTitle="Type Error" :onClick="notAFunctionError" />
+        <EventButton buttonTitle="URIError" :onClick="uriError" />
+        <EventButton buttonTitle="Handled" :onClick="syntaxError" />
+        <EventButton buttonTitle="Unhandled [RangeError]" :onClick="unhandledError" />
       </div>
     </div>
 </template>
@@ -29,7 +29,7 @@ import * as Integrations from "@sentry/integrations";
 const HELLO = "Hello";
 
 Sentry.init({
-  dsn: "https://bec2c6cf33f54632b7eb4667960233ed@sentry.io/1496554",
+  dsn: "https://1bddec6f128949e3bd9de147c10447a1@sentry.io/1889218",
   release: process.env.VUE_APP_RELEASE,
   environment: "prod",
   integrations: [new Integrations.Vue({ Vue, attachProps: true })]
@@ -62,10 +62,15 @@ export default {
     },
 
     syntaxError: function() {
-      eval("foo bar");
+      try{
+        eval("foo bar");
+      }catch(error){
+          Sentry.captureException(error);
+      }
+      
     },
 
-    rangeError: function() {
+    unhandledError: function() {
       throw new RangeError("Parameter must be between 1 and 100");
     }
   }

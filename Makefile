@@ -3,7 +3,7 @@
 #  SENTRY_AUTH_TOKEN
 
 SENTRY_ORG=testorg-az
-SENTRY_PROJECT=vue-js
+SENTRY_PROJECT=ido-vue-js
 VERSION=`sentry-cli releases propose-version`
 
 setup_release: create_release associate_commits upload_sourcemaps

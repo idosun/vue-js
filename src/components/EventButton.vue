@@ -1,6 +1,6 @@
 <template>
   <div>
-   <button class="event-button" @click="onClick()">{{ title }}</button>  
+   <button class="event-button" @click="onClick()">{{ buttonTitle }}</button>  
   </div>
 </template>
 
@@ -8,7 +8,7 @@
 export default {
   name: "EventButton",
   props: {
-    title: String,
+    buttonTitle: String,
     onClick: Function
   }
 };
