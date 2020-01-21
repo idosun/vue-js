@@ -32,7 +32,7 @@ Sentry.init({
   dsn: "https://1bddec6f128949e3bd9de147c10447a1@sentry.io/1889218",
   release: process.env.VUE_APP_RELEASE,
   environment: "prod",
-  integrations: [new Integrations.Vue({ Vue, attachProps: true })],
+  integrations: [new Integrations.Vue({ Vue, attachProps: true }), new Integrations.RewriteFrames()],
   beforeSend: function(event, hint){
     debugger;
     return event;
