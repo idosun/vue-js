@@ -12,10 +12,10 @@
         <button class="event-button" v-on:click="submitEmail">Submit</button>
       </div>
       <div id="event-list">
-        <EventButton buttonTitle="Type Error" :onClick="notAFunctionError" />
-        <EventButton buttonTitle="URIError" :onClick="uriError" />
-        <EventButton buttonTitle="Handled" :onClick="syntaxError" />
+        <EventButton buttonTitle="Handled [SyntaxError]" :onClick="handledError" />
         <EventButton buttonTitle="Unhandled [RangeError]" :onClick="unhandledError" />
+        <EventButton buttonTitle="Capture Message" :onClick="captureMessage" />
+        <EventButton buttonTitle="UnHandled Promise Rejection" :onClick="unhandledPromiseRejection" />
       </div>
     </div>
 </template>
@@ -32,7 +32,11 @@ Sentry.init({
   dsn: "https://1bddec6f128949e3bd9de147c10447a1@sentry.io/1889218",
   release: process.env.VUE_APP_RELEASE,
   environment: "prod",
-  integrations: [new Integrations.Vue({ Vue, attachProps: true })]
+  integrations: [new Integrations.Vue({ Vue, attachProps: true })],
+  beforeSend: function(event, hint){
+    debugger;
+    return event;
+  }
 });
 
 export default {
@@ -57,17 +61,27 @@ export default {
       var someArray = [{ func: function() {} }];
       someArray[1].func();
     },
-    uriError: function() {
-      decodeURIComponent("%");
+
+    unhandledPromiseRejection: function(){
+      Promise.reject(new Error('fail')).then(function(result) {
+        console.log('Resolved');
+      });
     },
 
-    syntaxError: function() {
-      try{
-        eval("foo bar");
-      }catch(error){
-          Sentry.captureException(error);
-      }
-      
+    captureMessage: function() {
+      //decodeURIComponent("%");
+      Sentry.withScope(function(scope) {
+        scope.setLevel('info');
+        Sentry.captureMessage('Message Captured: This shouldnt happen');
+      });
+    },
+
+    handledError: function() {
+       try{
+            eval("foo bar");
+          }catch(error){
+              Sentry.captureException(error);
+          }
     },
 
     unhandledError: function() {
